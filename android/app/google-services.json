@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "336562238941",
+    "firebase_url": "https://suyo-app.firebaseio.com",
+    "project_id": "suyo-app",
+    "storage_bucket": "suyo-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336562238941:android:28f5353d2f0c62afdc3234",
+        "android_client_info": {
+          "package_name": "com.mjsitechsolutions.suyo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336562238941-kaggp4d2ddiuiddodrdnmstplcun7rqj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDs5UdRu4V-raO99vPDMyBEUX9N7gmpUNM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336562238941-kaggp4d2ddiuiddodrdnmstplcun7rqj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
