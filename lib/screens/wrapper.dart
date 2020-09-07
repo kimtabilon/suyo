@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:suyo/screens/authenticate/authenticate.dart';
-import 'package:suyo/screens/home/home.dart';
+import 'package:provider/provider.dart';
+import 'package:suyo/models/user.dart';
+import 'package:suyo/screens/checker.dart';
+import 'package:suyo/services/auth.dart';
 
-class Wrapper extends StatefulWidget {
-  @override
-  _WrapperState createState() => _WrapperState();
-}
+class Wrapper extends StatelessWidget {
 
-class _WrapperState extends State<Wrapper> {
   @override
   Widget build(BuildContext context) {
-    return Home();
-    //return Authenticate();
+    return StreamProvider<User>.value(
+      value: AuthService().user,
+      child: Checker(),
+    );
   }
 }
+

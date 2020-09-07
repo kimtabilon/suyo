@@ -2,17 +2,16 @@ class User {
 
   final String uid;
   final String email;
-  final String type;
+  final String role;
 
   User({
     this.uid,
     this.email,
-    this.type,
+    this.role,
   });
 }
 
 class Profile {
-  final String uid;
   final String firstName;
   final String middleName;
   final String lastName;
@@ -20,7 +19,6 @@ class Profile {
   final String birthday;
 
   Profile({
-    this.uid,
     this.firstName,
     this.middleName,
     this.lastName,

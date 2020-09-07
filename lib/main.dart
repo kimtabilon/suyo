@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:suyo/screens/components/route.dart';
-import 'package:suyo/screens/wrapper.dart';
+import 'package:suyo/shared/route.dart';
 
-void main() {
+void main() async {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Suyo App',
-      //home: Wrapper(),
-      //home: FirstPage(),
-      initialRoute: '/login',
+      initialRoute: '/wrapper',
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
 }
+
