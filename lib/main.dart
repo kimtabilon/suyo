@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:suyo/shared/route.dart';
+import 'package:suyo/app/route.dart';
+//import 'package:suyo/locator.dart';
 
 void main() async {
+  //setupLocator();
   runApp(MyApp());
 }
 
