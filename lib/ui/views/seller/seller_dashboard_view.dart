@@ -1,8 +1,5 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:provider/provider.dart';
-import 'package:suyo/models/product._modeldart';
+import 'package:get/get.dart';
 import 'package:suyo/models/user_model.dart';
 import 'package:suyo/services/product_service.dart';
 import 'package:suyo/ui/components/constants_ui_component.dart';
@@ -37,13 +34,7 @@ class _SellerDashboardViewState extends State<SellerDashboardView> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: themeColorGreen,
         child: const Icon(Icons.add), onPressed: () {
-        Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.downToUp,
-              child: SellerSetupAddProductView(user: widget.user,),
-            )
-        );
+          Get.to(SellerSetupAddProductView(user: widget.user,));
         },
       ),
       /*bottomNavigationBar: CurvedNavigationBar(

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:suyo/controllers/page_responsive_controller.dart';
+import 'package:suyo/controllers/store_group_controller.dart';
 import 'package:suyo/models/category_model.dart';
+import 'package:suyo/models/store_group_model.dart';
 import 'package:suyo/services/store_service.dart';
 import 'package:suyo/ui/views/home/widgets/store_widgets/store_clippath_widget.dart';
 import 'package:suyo/ui/views/home/widgets/store_widgets/store_popular_tile_widget.dart';
@@ -7,33 +11,17 @@ import 'package:suyo/ui/views/home/widgets/store_widgets/store_suggested_tile_wi
 
 class HomeStoresView extends StatefulWidget {
 
-  final CategoryModel category;
-
-  HomeStoresView({this.category});
-
   @override
   _HomeStoresViewState createState() => _HomeStoresViewState();
 }
 
 class _HomeStoresViewState extends State<HomeStoresView> {
-  var _crossAxisCount = 2;
 
   @override
   Widget build(BuildContext context) {
+    StoreGroupModel storeGroup = Get.find<StoreGroupController>().selectedStoreGroup;
 
-    var size = MediaQuery.of(context).size;
-
-    if(size.width >= 1400 ) {
-      setState(()=> _crossAxisCount = 6);
-    }else if(size.width >= 1080 ) {
-      setState(()=> _crossAxisCount = 5);
-    } else if(size.width >= 900) {
-      setState(()=> _crossAxisCount = 4);
-    } else if(size.width >= 768) {
-      setState(()=> _crossAxisCount = 3);
-    } else {
-      setState(()=> _crossAxisCount = 2);
-    }
+    int _crossAxisCount = Get.find<PageResponsiveController>().crossAxisCount;
 
     return Scaffold(
       body: CustomScrollView(
@@ -45,14 +33,20 @@ class _HomeStoresViewState extends State<HomeStoresView> {
             actions: <Widget>[
               // action button
               IconButton(
-                  icon: Icon(Icons.info_outline, color: Colors.white),
+                  icon: Icon(Icons.favorite, color: Colors.white),
                   onPressed: () {
 
                   },
               ),
+              IconButton(
+                icon: Icon(Icons.search, color: Colors.white),
+                onPressed: () {
+
+                },
+              ),
               // action button
             ],
-            flexibleSpace: StoreClippathWidget(category: widget.category,),
+            flexibleSpace: StoreClippathWidget(),
           ),
 
           SliverToBoxAdapter(
@@ -62,7 +56,7 @@ class _HomeStoresViewState extends State<HomeStoresView> {
             ),
           ),
           StreamBuilder(
-            stream: StoreService(catid: widget.category.catid).stores,
+            stream: StoreService(storeGroupId: storeGroup.storeGroupId).stores,
             builder: (context, snapshot) {
               return SliverToBoxAdapter(
                 child: Container(
@@ -72,7 +66,7 @@ class _HomeStoresViewState extends State<HomeStoresView> {
                     scrollDirection: Axis.horizontal,
                     itemCount: snapshot.hasData ? snapshot.data.length : 0,
                     itemBuilder: (context, index) {
-                      return StoreSuggestedTileWidget(store: snapshot.data[index]);
+                      return StoreSuggestedTileWidget(storeGroup: storeGroup, store: snapshot.data[index]);
                     },
                   ),
                 ),
@@ -86,7 +80,7 @@ class _HomeStoresViewState extends State<HomeStoresView> {
             ),
           ),
           StreamBuilder(
-              stream: StoreService(catid: widget.category.catid).stores,
+              stream: StoreService(storeGroupId: storeGroup.storeGroupId).stores,
               builder: (context, snapshot){
                 return SliverGrid(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

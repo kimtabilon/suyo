@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:get/get.dart';
 import 'package:path/path.dart' as Path;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:suyo/models/category_model.dart';
+import 'package:suyo/models/store_group_model.dart';
 import 'package:suyo/models/user_model.dart';
 import 'package:suyo/services/store_service.dart';
 import 'package:suyo/ui/components/constants_ui_component.dart';
@@ -14,19 +15,18 @@ import 'package:suyo/ui/components/steps_indicator_ui_component.dart';
 import 'package:suyo/ui/views/seller/setup/seller_setup_add_product_view.dart';
 
 class SellerSetupStoreView extends StatefulWidget {
-
   final CategoryModel category;
+  final StoreGroupModel storeGroup;
   final UserModel user;
 
-  SellerSetupStoreView({this.category, this.user});
+  SellerSetupStoreView({this.category, this.storeGroup, this.user});
 
   @override
   _SellerSetupStoreViewState createState() => _SellerSetupStoreViewState();
 }
 
 class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
-
-  final  _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   String name = '';
   String tag = '';
@@ -52,26 +52,24 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
       await _picker.getImage(source: ImageSource.gallery).then((pickedFile) {
         uploadFile(File(pickedFile.path), imageType);
       });
-    }catch(e){
+    } catch (e) {
       print(e.toString());
     }
-
   }
 
   Future uploadFile(_image, imageType) async {
-    StorageReference storageReference = FirebaseStorage.instance
-        .ref()
-        .child('stores/${widget.user.uid}/${imageType}_${Path.basename(_image.path)}');
+    StorageReference storageReference = FirebaseStorage.instance.ref().child(
+        'stores/${widget.user.uid}/${imageType}_${Path.basename(_image.path)}');
     StorageUploadTask uploadTask = storageReference.putFile(_image);
     await uploadTask.onComplete;
     print('File Uploaded');
     storageReference.getDownloadURL().then((fileURL) {
-      switch(imageType) {
+      switch (imageType) {
         case 'logo':
-          setState(()=>logo=fileURL);
+          setState(() => logo = fileURL);
           break;
         case 'banner':
-          setState(()=>banner=fileURL);
+          setState(() => banner = fileURL);
           break;
         default:
           break;
@@ -88,13 +86,12 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
 
   @override
   Widget build(BuildContext context) {
-
     var size = MediaQuery.of(context).size;
 
-    if(size.width >= 500) {
-      setState(()=> _dialogWidth = 400.0);
+    if (size.width >= 500) {
+      setState(() => _dialogWidth = 400.0);
     } else {
-      setState(()=> _dialogWidth = (size.width - (size.width/4)) );
+      setState(() => _dialogWidth = (size.width - (size.width / 4)));
     }
 
     return Scaffold(
@@ -102,7 +99,10 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
         elevation: 0.0,
         //backgroundColor: themeColorGreen,
         centerTitle: true,
-        title: Text('MERCHANT SETUP : Store Config', style: appbarSmTitle,),
+        title: Text(
+          'MERCHANT SETUP : Store Config',
+          style: appbarSmTitle,
+        ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -115,7 +115,6 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
             ),
           ),
         ),
-
       ),
       bottomNavigationBar: Container(
         padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
@@ -126,37 +125,47 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
           ),
         ),
         child: FlatButton(
-          child: Text(btn, style: TextStyle(color: Colors.white),),
+          child: Text(
+            btn,
+            style: TextStyle(color: Colors.white),
+          ),
           onPressed: () async {
             setState(() {
-              btn="Please wait...";
+              btn = "Please wait...";
             });
 
-            if(_formKey.currentState.validate()) {
-              dynamic result = await StoreService(catid: widget.category.catid).createStore(widget.user.uid, widget.category.catid, name, tag, description, street, barangay, city, province, logo, banner, theme);
+            if (_formKey.currentState.validate()) {
+              dynamic result = await StoreService(
+                      storeGroupId: widget.storeGroup.storeGroupId)
+                  .createStore(
+                      widget.user.uid,
+                      widget.category.categoryId,
+                      name,
+                      tag,
+                      description,
+                      street,
+                      barangay,
+                      city,
+                      province,
+                      logo,
+                      banner,
+                      theme);
 
-              if(result != null) {
-                Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: SellerSetupAddProductView(user: widget.user,),
-                    )
-                );
+              if (result != null) {
+                Get.to(SellerSetupAddProductView(user: widget.user,));
               } else {
                 setState(() {
-                  error="Somethings went wrong.";
-                  btn="SUBMIT";
+                  error = "Somethings went wrong.";
+                  btn = "SUBMIT";
                 });
               }
             } else {
               setState(() {
-                btn="SUBMIT";
+                btn = "SUBMIT";
               });
             }
           },
         ),
-
       ),
       body: CustomScrollView(
         slivers: <Widget>[
@@ -167,11 +176,17 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: Center(child: Text('PROVIDE YOUR STORE DETAILS'),),
+                    child: Center(
+                      child: Text('PROVIDE YOUR STORE DETAILS'),
+                    ),
                   ),
-                  StepsIndicator(selectedStep: 1, nbSteps: 3,),
-                  SizedBox(height: 15.0,),
-
+                  StepsIndicator(
+                    selectedStep: 1,
+                    nbSteps: 3,
+                  ),
+                  SizedBox(
+                    height: 15.0,
+                  ),
                 ],
               ),
             ),
@@ -186,26 +201,36 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(height: 10.0,),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: Text('STORE', style: themeTextBold.copyWith(fontSize: 12.0),),
+                    SizedBox(
+                      height: 10.0,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: Text(
+                        'STORE',
+                        style: themeTextBold.copyWith(fontSize: 12.0),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 5.0),
                       child: TextFormField(
-                        validator: (val) => val.isEmpty ? 'Enter a store name.' : null,
+                        validator: (val) =>
+                            val.isEmpty ? 'Enter a store name.' : null,
                         onChanged: (val) => setState(() => name = val),
                         obscureText: false,
                         style: signUpTextStyle,
                         decoration: signUpInputDecoration.copyWith(
                             hintText: 'STORE NAME',
-                            prefixIcon: Icon(Icons.store, color: themeColorGreen,)
-                        ),
+                            prefixIcon: Icon(
+                              Icons.store,
+                              color: themeColorGreen,
+                            )),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 5.0),
                       child: TextFormField(
                         //validator: (val) => val.isEmpty ? 'Enter a store tag name.' : null,
                         onChanged: (val) => setState(() => tag = val),
@@ -213,57 +238,76 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
                         style: signUpTextStyle,
                         decoration: signUpInputDecoration.copyWith(
                             hintText: 'STORE TAG NAME',
-                            prefixIcon: Icon(Icons.star_border, color: themeColorGreen,)
-                        ),
+                            prefixIcon: Icon(
+                              Icons.star_border,
+                              color: themeColorGreen,
+                            )),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 5.0),
                       child: TextFormField(
-                        validator: (val) => val.isEmpty ? 'Enter Description.' : null,
+                        validator: (val) =>
+                            val.isEmpty ? 'Enter Description.' : null,
                         onChanged: (val) => setState(() => description = val),
                         obscureText: false,
                         style: signUpTextStyle,
                         decoration: signUpInputDecoration.copyWith(
                             hintText: 'DESCRIPTION',
-                            prefixIcon: Icon(Icons.info_outline, color: themeColorGreen,)
-                        ),
+                            prefixIcon: Icon(
+                              Icons.info_outline,
+                              color: themeColorGreen,
+                            )),
                       ),
                     ),
-
-                    SizedBox(height: 20.0,),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: Text('STORE ADDRESS', style: themeTextBold.copyWith(fontSize: 12.0),),
+                    SizedBox(
+                      height: 20.0,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: Text(
+                        'STORE ADDRESS',
+                        style: themeTextBold.copyWith(fontSize: 12.0),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 5.0),
                       child: TextFormField(
-                        validator: (val) => val.isEmpty ? 'Enter Street.' : null,
+                        validator: (val) =>
+                            val.isEmpty ? 'Enter Street.' : null,
                         onChanged: (val) => setState(() => street = val),
                         obscureText: false,
                         style: signUpTextStyle,
                         decoration: signUpInputDecoration.copyWith(
                             hintText: 'STREET',
-                            prefixIcon: Icon(Icons.pin_drop, color: themeColorGreen,)
-                        ),
+                            prefixIcon: Icon(
+                              Icons.pin_drop,
+                              color: themeColorGreen,
+                            )),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 5.0),
                       child: TextFormField(
-                        validator: (val) => val.isEmpty ? 'Enter Barangay.' : null,
+                        validator: (val) =>
+                            val.isEmpty ? 'Enter Barangay.' : null,
                         onChanged: (val) => setState(() => barangay = val),
                         obscureText: false,
                         style: signUpTextStyle,
                         decoration: signUpInputDecoration.copyWith(
                             hintText: 'BARANGAY',
-                            prefixIcon: Icon(Icons.streetview, color: themeColorGreen,)
-                        ),
+                            prefixIcon: Icon(
+                              Icons.streetview,
+                              color: themeColorGreen,
+                            )),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 5.0),
                       child: TextFormField(
                         validator: (val) => val.isEmpty ? 'Enter City.' : null,
                         onChanged: (val) => setState(() => city = val),
@@ -271,37 +315,53 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
                         style: signUpTextStyle,
                         decoration: signUpInputDecoration.copyWith(
                             hintText: 'CITY',
-                            prefixIcon: Icon(Icons.location_city, color: themeColorGreen,)
-                        ),
+                            prefixIcon: Icon(
+                              Icons.location_city,
+                              color: themeColorGreen,
+                            )),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 5.0),
                       child: TextFormField(
-                        validator: (val) => val.isEmpty ? 'Enter Province.' : null,
+                        validator: (val) =>
+                            val.isEmpty ? 'Enter Province.' : null,
                         onChanged: (val) => setState(() => province = val),
                         obscureText: false,
                         style: signUpTextStyle,
                         decoration: signUpInputDecoration.copyWith(
                             hintText: 'PROVINCE',
-                            prefixIcon: Icon(Icons.landscape, color: themeColorGreen,)
-                        ),
+                            prefixIcon: Icon(
+                              Icons.landscape,
+                              color: themeColorGreen,
+                            )),
                       ),
                     ),
-                    SizedBox(height: 20.0,),
+                    SizedBox(
+                      height: 20.0,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 15.0),
-                      child: Text('ASSETS', style: themeTextBold.copyWith(fontSize: 12.0),),
+                      child: Text(
+                        'ASSETS',
+                        style: themeTextBold.copyWith(fontSize: 12.0),
+                      ),
                     ),
                     Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Center(child: Text('LOGO'),),
-                        Center(child: Text('BANNER'),),
-                        Center(child: Text('THEME'),),
-                      ]
-                    ),
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Center(
+                            child: Text('LOGO'),
+                          ),
+                          Center(
+                            child: Text('BANNER'),
+                          ),
+                          Center(
+                            child: Text('THEME'),
+                          ),
+                        ]),
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -309,28 +369,36 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
                         Container(
                           height: 100,
                           alignment: Alignment.center,
-                          child: logo != null ?
-                          Image.network(logo, height: 50, ) :
-                          RaisedButton(
-                            child: Text('Upload', style: TextStyle(color: Colors.white)),
-                            onPressed: () async {
-                              await chooseFile('logo');
-                            },
-                            color: themeColorGreen,
-                          ),
+                          child: logo != null
+                              ? Image.network(
+                                  logo,
+                                  height: 50,
+                                )
+                              : RaisedButton(
+                                  child: Text('Upload',
+                                      style: TextStyle(color: Colors.white)),
+                                  onPressed: () async {
+                                    await chooseFile('logo');
+                                  },
+                                  color: themeColorGreen,
+                                ),
                         ),
                         Container(
                           height: 100,
                           alignment: Alignment.center,
-                          child: banner != null ?
-                          Image.network(banner, height: 50, ) :
-                          RaisedButton(
-                            child: Text('Upload', style: TextStyle(color: Colors.white)),
-                            onPressed: () async {
-                              await chooseFile('banner');
-                            },
-                            color: themeColorGreen,
-                          ),
+                          child: banner != null
+                              ? Image.network(
+                                  banner,
+                                  height: 50,
+                                )
+                              : RaisedButton(
+                                  child: Text('Upload',
+                                      style: TextStyle(color: Colors.white)),
+                                  onPressed: () async {
+                                    await chooseFile('banner');
+                                  },
+                                  color: themeColorGreen,
+                                ),
                         ),
                         RaisedButton(
                           elevation: 3.0,
@@ -357,7 +425,7 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
                                     FlatButton(
                                       child: const Text('Got it'),
                                       onPressed: () {
-                                        setState((){
+                                        setState(() {
                                           theme = pickerColor.value.toString();
                                           currentColor = pickerColor;
                                         });
@@ -369,14 +437,20 @@ class _SellerSetupStoreViewState extends State<SellerSetupStoreView> {
                               },
                             );
                           },
-
                         ),
                       ],
                     ),
-                    SizedBox(height: 20.0,),
-                    Center(child: Text(error, style: TextStyle(color: Colors.red),)),
-
-                    SizedBox(height: 20.0,),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Center(
+                        child: Text(
+                      error,
+                      style: TextStyle(color: Colors.red),
+                    )),
+                    SizedBox(
+                      height: 20.0,
+                    ),
                   ],
                 ),
               ),

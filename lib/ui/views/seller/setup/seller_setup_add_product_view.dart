@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:page_transition/page_transition.dart';
+import 'package:get/get.dart';
 import 'package:path/path.dart' as Path;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -104,13 +104,7 @@ class _SellerSetupAddProductViewState extends State<SellerSetupAddProductView> {
               dynamic result = await ProductService(storeId: widget.user.uid).createProduct(name, description, banner);
 
               if(result != null) {
-                Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: SellerDashboardView(user: widget.user,),
-                    )
-                );
+                Get.to(SellerDashboardView(user: widget.user,));
               } else {
                 setState(() {
                   error="Somethings went wrong.";

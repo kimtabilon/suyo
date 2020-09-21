@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:suyo/app/route.dart';
-//import 'package:suyo/locator.dart';
+import 'package:get/get.dart';
+import 'package:suyo/ui/views/wrapper.dart';
 
 void main() async {
   //setupLocator();
@@ -12,11 +12,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Suyo App',
-      initialRoute: '/wrapper',
-      onGenerateRoute: RouteGenerator.generateRoute,
+      home: Wrapper()
     );
   }
 }

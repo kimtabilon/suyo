@@ -1,30 +1,27 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:suyo/controllers/store_controller.dart';
 import 'package:suyo/controllers/store_group_controller.dart';
 import 'package:suyo/models/store_group_model.dart';
 import 'package:suyo/models/store_model.dart';
-import 'package:suyo/ui/views/home/home_products_view.dart';
+import 'package:suyo/ui/views/home/home_stores_view.dart';
 
-class StorePopularTileWidget extends StatelessWidget {
+class StoreGroupPopularTileWidget extends StatelessWidget {
 
-  final StoreModel store;
+  final StoreGroupModel storeGroup;
 
-  StorePopularTileWidget({this.store});
+  StoreGroupPopularTileWidget({this.storeGroup});
 
   @override
   Widget build(BuildContext context) {
-    StoreGroupModel storeGroup = Get.find<StoreGroupController>().selectedStoreGroup;
-
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
         padding: EdgeInsets.zero,
         child: InkWell(
           onTap: () {
-            Get.put<StoreController>(StoreController()).setSelectStore(store);
-            Get.to(HomeProductsView());
+            Get.put<StoreGroupController>(StoreGroupController()).setSelectStoreGroup(storeGroup);
+            Get.to(HomeStoresView());
           },
           child: Card(
             child: Column(
@@ -38,8 +35,21 @@ class StorePopularTileWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          color: Color(int.parse(storeGroup.theme)),
+                          child: CachedNetworkImage(
+                            imageUrl: storeGroup.logo,
+                            placeholder: (context, url) =>
+                            const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => const Icon(Icons.error),
+                          ),
+                        ),
+                      ),
+                      Expanded(
                         child: CachedNetworkImage(
-                          imageUrl: store.customBanner ?? storeGroup.banner,
+                          imageUrl: storeGroup.banner,
                           imageBuilder: (context, imageProvider) => Container(
                             height: double.infinity,
                             decoration: BoxDecoration(
@@ -63,7 +73,7 @@ class StorePopularTileWidget extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(store.name, style: TextStyle(fontSize: 16)),
+                          Text(storeGroup.name, style: TextStyle(fontSize: 16)),
                           Text(storeGroup.tag, style: TextStyle(fontSize: 12),),
                           SizedBox(height: 5.0,),
                           Row(

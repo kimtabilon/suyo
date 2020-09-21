@@ -2,15 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:suyo/controllers/category_controller.dart';
-import 'package:suyo/controllers/store_group_controller.dart';
 import 'package:suyo/models/category_model.dart';
-import 'package:suyo/models/store_group_model.dart';
 import 'package:suyo/ui/components/arc_clipper_ui_component.dart';
 
-class StoreClippathWidget extends StatelessWidget {
+class StoreGroupClippathWidget extends StatelessWidget {
 
   CategoryModel category = Get.find<CategoryController>().selectedCategory;
-  StoreGroupModel storeGroup = Get.find<StoreGroupController>().selectedStoreGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +15,7 @@ class StoreClippathWidget extends StatelessWidget {
     return ClipPath(
       clipper: ArcClipper(),
       child: Container(
-        //decoration: BoxDecoration(color: Color(int.parse(category.theme))),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: CachedNetworkImageProvider(category.bannerOverlay),
-                fit: BoxFit.cover)),
+        decoration: BoxDecoration(color: Color(int.parse(category.theme))),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           mainAxisSize: MainAxisSize.max,
@@ -40,6 +33,7 @@ class StoreClippathWidget extends StatelessWidget {
                 ),
                 Text(category.title,
                     style: TextStyle(
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 20.0)),
               ],
@@ -51,9 +45,9 @@ class StoreClippathWidget extends StatelessWidget {
               child: SizedBox(
                 height: 120.0,
                 child: CachedNetworkImage(
-                  imageUrl: storeGroup.logo,
+                  imageUrl: category.banner,
                   placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
+                  const CircularProgressIndicator(),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),

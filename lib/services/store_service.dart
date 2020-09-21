@@ -3,9 +3,9 @@ import 'package:suyo/models/store_model.dart';
 
 class StoreService {
 
-  final String catid;
+  final String storeGroupId;
 
-  StoreService({this.catid});
+  StoreService({this.storeGroupId});
 
   final CollectionReference storeCollection = Firestore.instance.collection('store');
 
@@ -50,25 +50,22 @@ class StoreService {
   List<StoreModel> _storeListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
       return StoreModel(
-        storeid: doc.documentID,
-        catid: doc.data['catid'],
+        storeId: doc.documentID,
+        storeGroupId: doc.data['store_group_id'],
         name: doc.data['name'],
         description: doc.data['description'],
-        tag: doc.data['tag'],
+        customLogo: doc.data['custom_logo'],
+        customBanner: doc.data['custom_banner'],
 
-        street: doc.data['street'],
-        barangay: doc.data['barangay'],
-        city: doc.data['city'],
-        province: doc.data['province'],
-
-        logo: doc.data['logo'],
-        banner: doc.data['banner'],
-        theme: doc.data['theme']
+        addrStreet: doc.data['addr_street'],
+        addrBarangay: doc.data['addr_barangay'],
+        addrCity: doc.data['addr_city'],
+        addrProvince: doc.data['addr_province'],
       );
     }).toList();
   }
 
   Stream<List<StoreModel>> get stores {
-    return storeCollection.where('catid', isEqualTo: catid).snapshots().map(_storeListFromSnapshot);
+    return storeCollection.where('store_group_id', isEqualTo: storeGroupId).snapshots().map(_storeListFromSnapshot);
   }
 }

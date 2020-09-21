@@ -1,20 +1,18 @@
 class CategoryModel {
 
-  final String catid;
+  final String categoryId;
   final String title;
   final String description;
-  final String thumbnail;
   final String banner;
-  final String color;
+  final String bannerOverlay;
   final String theme;
 
   CategoryModel({
-      this.catid,
+      this.categoryId,
       this.title,
       this.description,
-      this.thumbnail,
       this.banner,
-      this.color,
+      this.bannerOverlay,
       this.theme,
   });
 

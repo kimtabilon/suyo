@@ -1,35 +1,29 @@
 class StoreModel {
-  final String storeid;
-  final String catid;
+  final String storeId;
+  final String storeGroupId;
 
   final String name;
   final String description;
-  final String tag;
+  final String customLogo;
+  final String customBanner;
 
-  final String street;
-  final String barangay;
-  final String city;
-  final String province;
-
-  final String logo;
-  final String banner;
-  final String theme;
+  final String addrStreet;
+  final String addrBarangay;
+  final String addrCity;
+  final String addrProvince;
 
   StoreModel({
-    this.storeid,
-    this.catid,
+    this.storeId,
+    this.storeGroupId,
 
     this.name,
     this.description,
-    this.tag,
+    this.customLogo,
+    this.customBanner,
 
-    this.street,
-    this.barangay,
-    this.city,
-    this.province,
-
-    this.logo,
-    this.banner,
-    this.theme,
+    this.addrStreet,
+    this.addrBarangay,
+    this.addrCity,
+    this.addrProvince,
   });
 }

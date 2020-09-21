@@ -7,13 +7,12 @@ class CategoryService {
   List<CategoryModel> _categoryListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
       return CategoryModel(
-        catid: doc.documentID,
+        categoryId: doc.documentID,
         title: doc.data['title'] ?? '',
         description: doc.data['description'] ?? '',
-        thumbnail: doc.data['thumbnail'] ?? '',
         banner: doc.data['banner'] ?? '',
-        color: doc.data['color'] ?? '0xffffffff',
-        theme: doc.data['theme'] ?? ''
+        bannerOverlay: doc.data['banner_overlay'] ?? '',
+        theme: doc.data['theme'] ?? '0xffffffff'
       );
     }).toList();
   }

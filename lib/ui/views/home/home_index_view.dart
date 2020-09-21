@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:suyo/controllers/page_responsive_controller.dart';
 import 'package:suyo/models/user_model.dart';
 import 'package:suyo/services/category_service.dart';
 import 'package:suyo/ui/views/home/widgets/home_bottom_appbar_widget.dart';
@@ -18,23 +20,10 @@ class HomeIndexView extends StatefulWidget {
 
 class _HomeIndexViewState extends State<HomeIndexView> {
 
-  var _crossAxisCount = 2;
-
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
 
-    if(size.width >= 1400 ) {
-      setState(()=> _crossAxisCount = 6);
-    }else if(size.width >= 1080 ) {
-      setState(()=> _crossAxisCount = 5);
-    } else if(size.width >= 900) {
-      setState(()=> _crossAxisCount = 4);
-    } else if(size.width >= 768) {
-      setState(()=> _crossAxisCount = 3);
-    } else {
-      setState(()=> _crossAxisCount = 2);
-    }
+    int _crossAxisCount = Get.find<PageResponsiveController>().crossAxisCount;
 
     return Scaffold(
       drawer: Drawer(

@@ -1,30 +1,28 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:suyo/controllers/store_controller.dart';
 import 'package:suyo/controllers/store_group_controller.dart';
+import 'package:suyo/models/product_model.dart';
 import 'package:suyo/models/store_group_model.dart';
 import 'package:suyo/models/store_model.dart';
-import 'package:suyo/ui/views/home/home_products_view.dart';
+import 'package:suyo/ui/views/home/home_stores_view.dart';
 
-class StorePopularTileWidget extends StatelessWidget {
+class ProductMenuTileWidget extends StatelessWidget {
 
-  final StoreModel store;
+  final ProductModel product;
 
-  StorePopularTileWidget({this.store});
+  ProductMenuTileWidget({this.product});
 
   @override
   Widget build(BuildContext context) {
-    StoreGroupModel storeGroup = Get.find<StoreGroupController>().selectedStoreGroup;
-
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
         padding: EdgeInsets.zero,
         child: InkWell(
           onTap: () {
-            Get.put<StoreController>(StoreController()).setSelectStore(store);
-            Get.to(HomeProductsView());
+            //Get.put<StoreGroupController>(StoreGroupController()).setSelectStoreGroup(storeGroup);
+            //Get.to(HomeStoresView());
           },
           child: Card(
             child: Column(
@@ -39,7 +37,7 @@ class StorePopularTileWidget extends StatelessWidget {
                     children: [
                       Expanded(
                         child: CachedNetworkImage(
-                          imageUrl: store.customBanner ?? storeGroup.banner,
+                          imageUrl: product.banner,
                           imageBuilder: (context, imageProvider) => Container(
                             height: double.infinity,
                             decoration: BoxDecoration(
@@ -63,8 +61,8 @@ class StorePopularTileWidget extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(store.name, style: TextStyle(fontSize: 16)),
-                          Text(storeGroup.tag, style: TextStyle(fontSize: 12),),
+                          Text(product.name, style: TextStyle(fontSize: 16)),
+                          Text(product.description, style: TextStyle(fontSize: 12),),
                           SizedBox(height: 5.0,),
                           Row(
                             children: [

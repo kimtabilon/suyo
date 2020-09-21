@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:suyo/models/product._modeldart';
+import 'package:suyo/models/product_model.dart';
 
 class ProductService {
   final String storeId;
@@ -14,21 +14,20 @@ class ProductService {
     String banner,
   ) async {
     await productCollection.document().setData({
-      'storeId':storeId,
+      'store_id':storeId,
       'name':name,
       'description':description,
       'banner':banner,
     });
 
-    return productCollection.document(storeId);
+    return productCollection.document();
   }
 
-  List<Product> _productListFromSnapshot(QuerySnapshot snapshot) {
+  List<ProductModel> _productListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
-      print(doc.data['storeId']);
-      return Product(
+      return ProductModel(
           productId: doc.documentID,
-          storeId: doc.data['storeId'],
+          storeId: doc.data['store_id'],
           name: doc.data['name'],
           description: doc.data['description'],
           banner: doc.data['banner'],
@@ -36,7 +35,7 @@ class ProductService {
     }).toList();
   }
 
-  Stream<List<Product>> get products {
-    return productCollection.where('storeId', isEqualTo: storeId).snapshots().map(_productListFromSnapshot);
+  Stream<List<ProductModel>> get products {
+    return productCollection.where('store_id', isEqualTo: storeId).snapshots().map(_productListFromSnapshot);
   }
 }
